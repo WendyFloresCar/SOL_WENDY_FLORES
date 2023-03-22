@@ -1,31 +1,130 @@
-﻿@{
-    ViewBag.Title = "Home Page";
-}
-
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+﻿@model IEnumerable<SOL_WENDY_FLORES.Models.PRESTAMOVIEWMODEL>
+@{ ViewBag.Title = "Home Page"; }
 
 <div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+    <div class="col-md-12">
+        <div class="mail-box">
+            <h2>
+                Gestión de prestamos
+            </h2>
+            <hr />
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.ActionLink("Nuevo Préstamo", "Create", null, new { @class = "btn btn-primary info-dialog-window" })
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="table-responsive table-sm table-hover col-md-12">
+                    <table id="example" class="table table-hover table-mail table-bordered">
+                        <thead class="table-active">
+                            <tr>
+                                <th class="text-center">ID Préstamo</th>
+                                <th class="text-center">ID Libro</th>
+                                <th class="text-center">Nombre Libro</th>
+                                <th class="text-center">Fecha préstamo</th>
+                                <th class="text-center">DNI Usuario</th>
+                                <th class="text-center">Nombre Usuario</th>
+                                <th class="text-center">Apellido Usuario</th>
+                                <th class="text-center">Tipo Usuario</th>
+                                <th class="text-center">Tipo Lectura</th>
+                                <th class="text-center">Fecha Devolución</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                <tr>
+                    <td class="text-center">@Html.DisplayFor(modelItem => item.IdPrestamo)</td>
+                    <td class="text-center">@Html.DisplayFor(modelItem => item.IdLibro)</td>
+                    <td class="text-center">@Html.DisplayFor(modelItem => item.NombreLibro)</td>
+                    <td class="text-center">@Html.DisplayFor(modelItem => item.FechaPrestamo)</td>
+                    <td class="text-center">@Html.DisplayFor(modelItem => item.DniUsuario)</td>
+                    <td class="text-center">@Html.DisplayFor(modelItem => item.NombreUsuario)</td>
+                    <td class="text-center">@Html.DisplayFor(modelItem => item.ApellidoUsuario)</td>
+                    <td class="text-center">@Html.DisplayFor(modelItem => item.TipoUsuario)</td>
+                    <td class="text-center">@Html.DisplayFor(modelItem => item.TipoLectura)</td>
+                    <td class="text-center">@Html.DisplayFor(modelItem => item.FechaDevolucion)</td>
+
+                    <td>
+                        <a href="~/Home/Devolucion/@item.IdPrestamo" class="btn btn-warning">Devolución</a>
+                    </td>
+                </tr>}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<div class="modal fade" id="Info" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title">Agregar préstamo</h2>
+            </div>
+            <div class="modal-body">
+                <div class="teeee">Please wait...</div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+
+    <script>
+        $("body").on("click", "a.info-dialog-window", null, function (e) {
+            e.preventDefault();
+            var $link = $(this);
+            var url = $(this).attr('href');
+            if (url.indexOf('#') == 0) {
+                $('#Info').modal('show');
+            }
+            else {
+                $.get(url, function (data) {
+                    $('#Info .teeee').html(data);
+                    $('#Info').modal();
+                });
+            }
+        });
+        function ValidarInformacion() {
+            $(".errorForm").remove();
+
+            var valid = true;
+            $("#formCreate :input[required]").each(function () {
+                if ($(this).val() == 0 || $(this).val() == "") {
+                    valid = false;
+                    $(this).focus();
+                    $(this).after('<span class="errorForm text-danger">Completa este campo</span>');
+                    return false;
+                }
+            });
+
+            if (valid) {
+                RegistrarInformacion();
+            }
+        }
+
+        function RegistrarInformacion() {
+            var modelo = new Object();
+            $("#formCreate input, select, textarea").each(function () {
+                modelo[this.name] = this.value;
+            });
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Create", "Home")',
+                data: modelo,
+                success: function (returnedData) {
+                    if (returnedData.error) {
+                        alert(returnedData.message);
+                    } else {
+                        window.location.reload()
+                    }
+                },
+                error: function (ex) {
+                    alert('Prestamo/Create' + ex);
+                }
+             });
+        }
+    </script>
+}

@@ -1,0 +1,53 @@
+﻿
+@{
+    ViewBag.Title = "Create";
+}
+
+<div class="ibox-content">
+    <div class="row">
+        <form asp-action="Create" id="formCreate">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="col col-sm-12">
+                <div class="form-group">
+                    <div class="input text">
+                        <label name="IDUSUARIOS" class="control-label">Usuario</label>
+                        <select name="IDUSUARIOS" class="form-control">
+                            @foreach (var category in ViewBag.IDUSUARIOS)
+                            {
+                                <option value="@category.ID">@category.NombreCompleto</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col col-sm-12">
+                <div class="form-group">
+                    <div class="input text">
+                        <label  class="control-label">Libro</label>
+                        <select name="IDLIBROS" class="form-control">
+                            @foreach (var category in ViewBag.IDLIBROS)
+                            {
+                                <option value="@category.ID">@category.NOMBRE</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col col-sm-12">
+                <div class="form-group">
+                    <div class="input text">
+                        <label class="control-label">Tipo Lectura</label>
+                        <input name="TIPOLECTURA" class="form-control" required />
+                        <span asp-validation-for="TIPOLECTURA" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col col-sm-12 text-right">
+                <div class="form-group">
+                    <input type="button" onclick="ValidarInformacion()" value="Guardar" class="btn btn-default" />
+                    <span class="text-danger errorForm"></span>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
